@@ -1,0 +1,108 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=DM+Sans:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  *, *::before, *::after { box-sizing: border-box; }
+  body {
+    @apply font-body bg-gray-50 text-gray-900;
+  }
+  select, input, button, textarea { font-family: inherit; }
+
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { @apply bg-navy-200 rounded; }
+  ::-webkit-scrollbar-thumb:hover { @apply bg-navy-300; }
+}
+
+@layer components {
+  /* ── Buttons ── */
+  .btn-primary {
+    @apply bg-navy-700 text-white border border-navy-700 rounded-md
+           px-4 py-[7px] text-[12px] font-semibold cursor-pointer
+           inline-flex items-center gap-[5px] tracking-[0.2px]
+           transition-colors duration-150 font-body;
+  }
+  .btn-primary:hover { @apply bg-navy-600 shadow-md; }
+
+  .btn-default {
+    @apply bg-white text-gray-700 border border-gray-200 rounded-md
+           px-[14px] py-[7px] text-[12px] font-medium cursor-pointer
+           inline-flex items-center gap-[5px]
+           transition-colors duration-150 font-body;
+  }
+  .btn-default:hover { @apply bg-gray-50 border-gray-300; }
+
+  .btn-danger {
+    @apply bg-white text-red-700 border border-red-200 rounded-md
+           px-[14px] py-[7px] text-[12px] font-medium cursor-pointer
+           transition-colors duration-150 font-body;
+  }
+  .btn-danger:hover { @apply bg-red-100; }
+
+  .btn-success {
+    @apply bg-navy-50 text-navy-600 border border-navy-200 rounded-md
+           px-[14px] py-[7px] text-[12px] font-semibold cursor-pointer
+           transition-colors duration-150 font-body;
+  }
+  .btn-success:hover { @apply bg-navy-100; }
+
+  /* ── Inputs ── */
+  .input-field {
+    @apply w-full px-3 py-[9px] text-[13px]
+           border-[1.5px] border-gray-200 rounded-[7px] outline-none
+           bg-white text-gray-900
+           transition-[border-color,box-shadow] duration-150 font-body;
+  }
+  .input-field:focus {
+    @apply border-navy-400;
+    box-shadow: 0 0 0 3px #dce6f4;
+  }
+  select.input-field { @apply cursor-pointer; }
+
+  /* ── Tab buttons ── */
+  .tab-btn {
+    @apply px-[14px] py-[6px] rounded-md text-[12px] font-medium cursor-pointer
+           border-[1.5px] border-gray-200 bg-transparent text-gray-500
+           transition-all duration-150 font-body;
+  }
+  .tab-btn.active {
+    @apply bg-navy-700 border-navy-700 text-white font-semibold;
+  }
+  .tab-btn:not(.active):hover {
+    @apply border-navy-300 text-navy-500 bg-navy-50;
+  }
+
+  /* ── Sidebar buttons ── */
+  .sidebar-btn {
+    @apply flex items-center gap-[10px] px-4 py-[10px] w-full border-none
+           bg-transparent text-[rgba(255,255,255,0.45)] text-[13px] font-normal
+           cursor-pointer border-l-[3px] border-l-transparent
+           transition-all duration-150 whitespace-nowrap text-left font-body tracking-[0.1px];
+  }
+  .sidebar-btn:hover:not(.sidebar-btn-active) {
+    background: rgba(255,255,255,0.06);
+    color: rgba(255,255,255,0.75);
+  }
+  .sidebar-btn-active {
+    background: rgba(255,255,255,0.1) !important;
+    border-left-color: #d4a017 !important;
+    color: #fff !important;
+    font-weight: 600 !important;
+  }
+
+  /* ── Table rows ── */
+  tr.table-row:hover td { @apply bg-navy-50; }
+  th { user-select: none; }
+
+  /* ── Card hover ── */
+  .card-hover {
+    @apply transition-[box-shadow,border-color,transform] duration-200;
+  }
+  .card-hover:hover {
+    box-shadow: 0 8px 28px rgba(27,42,74,0.14) !important;
+    @apply border-navy-300 -translate-y-0.5;
+  }
+}
