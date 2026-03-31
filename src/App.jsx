@@ -38,7 +38,7 @@ const INSTRUCTOR_NAV = [
 
 const STUDENT_NAV = [
   { id: 'dashboard', label: 'Dashboard' },
-  { id: ' class-standing', label: 'Class Standing' },
+  // { id: ' class-standing', label: 'Class Standing' },
 ];
 
 const ADMIN_NAV = [
