@@ -417,6 +417,27 @@ export default function InstructorClassStanding() {
 
     setSavingSpreadsheet(true);
     try {
+      // First, ensure ClassStanding records exist for all students
+      const studentsWithoutCS = Object.values(spreadsheetData).filter(d => !d.id);
+      
+      if (studentsWithoutCS.length > 0) {
+        const gradesToCreate = studentsWithoutCS.map(d => ({
+          student_id: d.student_id,
+          section_subject_id: selectedSsId,
+          grading_period: selectedPeriod,
+          major_exam_score: null,
+        }));
+
+        await axios.post('/class-standings/bulk', { 
+          type: 'class_standing', 
+          grades: gradesToCreate 
+        });
+        
+        // Refresh data to get the new ClassStanding IDs
+        await fetchData();
+      }
+
+      // Now update major exam scores
       const grades = Object.values(spreadsheetData)
         .filter(d => d.id)
         .map(d => ({
@@ -427,6 +448,7 @@ export default function InstructorClassStanding() {
       if (grades.length > 0) {
         await axios.put('/class-standings', { type: 'class_standing', grades });
       }
+      
       alert('Grades saved successfully');
       await fetchData();
     } catch (err) {
