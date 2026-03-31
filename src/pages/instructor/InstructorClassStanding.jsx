@@ -84,7 +84,6 @@ export default function InstructorClassStanding() {
   const [submittingGrades, setSubmittingGrades] = useState(false);
   const [submittingFinalGrades, setSubmittingFinalGrades] = useState(false);
   const [periodsFinalized, setPeriodsFinalized] = useState({});
-  const [finalGradesSubmitted, setFinalGradesSubmitted] = useState({});
   
   const [modal, setModal] = useState(null);
   const [selStudent, setSelStudent] = useState(null);
@@ -130,13 +129,12 @@ export default function InstructorClassStanding() {
       const studentRes = await axios.get(`/students?section_id=${ss.section_id}&per_page=500`);
       const studentsData = studentRes.data.data || studentRes.data;
 
-      const [quizRes, recRes, attRes, projRes, csRes, sfgRes] = await Promise.all([
+      const [quizRes, recRes, attRes, projRes, csRes] = await Promise.all([
         axios.get(`/quiz-records?section_subject_id=${selectedSsId}&grading_period=${selectedPeriod}&per_page=500`),
         axios.get(`/recitation-records?section_subject_id=${selectedSsId}&grading_period=${selectedPeriod}&per_page=500`),
         axios.get(`/attendance-records?section_subject_id=${selectedSsId}&grading_period=${selectedPeriod}&per_page=500`),
         axios.get(`/project-records?section_subject_id=${selectedSsId}&grading_period=${selectedPeriod}&per_page=500`),
         axios.get(`/class-standings?section_subject_id=${selectedSsId}&grading_period=${selectedPeriod}&per_page=500`),
-        axios.get(`/student-final-grades?section_subject_id=${selectedSsId}&per_page=500`),
       ]);
 
       const quizData = quizRes.data.data || quizRes.data;
@@ -144,11 +142,6 @@ export default function InstructorClassStanding() {
       const attData = attRes.data.data || attRes.data;
       const projData = projRes.data.data || projRes.data;
       const csData = csRes.data.data || csRes.data;
-      const sfgData = sfgRes.data.data || sfgRes.data;
-
-      // Check if final grades have been submitted for this section-subject
-      const hasSubmitted = sfgData.some(fg => fg.status === 'submitted' || fg.status === 'finalized');
-      setFinalGradesSubmitted(prev => ({ ...prev, [selectedSsId]: hasSubmitted }));
 
       setStudents(studentsData);
       setRecords({
@@ -1422,10 +1415,10 @@ export default function InstructorClassStanding() {
           <button
             className="btn-secondary !py-2 !text-[11px]"
             onClick={handleSubmitFinalGrades}
-            disabled={submittingFinalGrades || !periodsFinalized[1] || !periodsFinalized[2] || !periodsFinalized[3] || finalGradesSubmitted[selectedSsId]}
-            title={finalGradesSubmitted[selectedSsId] ? 'Final grades already submitted' : (!periodsFinalized[1] || !periodsFinalized[2] || !periodsFinalized[3] ? 'Complete all 3 grading periods to enable' : 'Submit Final Grades to Admin')}
+            disabled={submittingFinalGrades || !periodsFinalized[1] || !periodsFinalized[2] || !periodsFinalized[3]}
+            title={!periodsFinalized[1] || !periodsFinalized[2] || !periodsFinalized[3] ? 'Complete all 3 grading periods to enable' : 'Submit Final Grades to Admin'}
           >
-            {submittingFinalGrades ? 'Submitting...' : finalGradesSubmitted[selectedSsId] ? 'Final Grades Submitted' : 'Submit Final Grades'}
+            {submittingFinalGrades ? 'Submitting...' : 'Submit Final Grades'}
           </button>
         </div>
       )}
