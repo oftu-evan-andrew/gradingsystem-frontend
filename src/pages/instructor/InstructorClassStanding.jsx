@@ -82,6 +82,8 @@ export default function InstructorClassStanding() {
   const [spreadsheetData, setSpreadsheetData] = useState({});
   const [savingSpreadsheet, setSavingSpreadsheet] = useState(false);
   const [submittingGrades, setSubmittingGrades] = useState(false);
+  const [submittingFinalGrades, setSubmittingFinalGrades] = useState(false);
+  const [periodsFinalized, setPeriodsFinalized] = useState({});
   
   const [modal, setModal] = useState(null);
   const [selStudent, setSelStudent] = useState(null);
@@ -149,6 +151,9 @@ export default function InstructorClassStanding() {
         project: projData,
       });
       setClassStandings(csData);
+
+      // Check which periods are finalized
+      await checkAllPeriodsFinalized();
 
       const spreadData = {};
       studentsData.forEach(st => {
@@ -365,6 +370,45 @@ export default function InstructorClassStanding() {
       alert(err.response?.data?.message || 'Failed to submit grades');
     } finally {
       setSubmittingGrades(false);
+    }
+  };
+
+  const handleSubmitFinalGrades = async () => {
+    if (!selectedSsId) return;
+    if (!confirm('Submit Final Grades to Admin for approval? This will calculate the average of all 3 grading periods.')) return;
+
+    setSubmittingFinalGrades(true);
+    try {
+      const res = await axios.post('/student-final-grades/bulk/submit', {
+        section_subject_id: selectedSsId,
+      });
+      alert(res.data.message || 'Final grades submitted successfully');
+      await fetchData();
+    } catch (err) {
+      console.error('Failed to submit final grades', err);
+      alert(err.response?.data?.message || 'Failed to submit final grades');
+    } finally {
+      setSubmittingFinalGrades(false);
+    }
+  };
+
+  const checkAllPeriodsFinalized = async () => {
+    if (!selectedSsId) return false;
+    try {
+      const res = await axios.get(`/class-standings?section_subject_id=${selectedSsId}&per_page=500`);
+      const data = res.data.data || res.data;
+      
+      const periods = { 1: false, 2: false, 3: false };
+      data.forEach(cs => {
+        if (cs.status === 'finalized') {
+          periods[cs.grading_period] = true;
+        }
+      });
+      setPeriodsFinalized(periods);
+      return periods[1] && periods[2] && periods[3];
+    } catch (err) {
+      console.error('Failed to check periods', err);
+      return false;
     }
   };
 
@@ -1331,6 +1375,20 @@ export default function InstructorClassStanding() {
           </div>
         )}
       </div>
+
+      {/* Submit Final Grades Button */}
+      {selectedSsId && (
+        <div className="mt-3">
+          <button
+            className="btn-secondary !py-2 !text-[11px]"
+            onClick={handleSubmitFinalGrades}
+            disabled={submittingFinalGrades || !periodsFinalized[1] || !periodsFinalized[2] || !periodsFinalized[3]}
+            title={!periodsFinalized[1] || !periodsFinalized[2] || !periodsFinalized[3] ? 'Complete all 3 grading periods to enable' : 'Submit Final Grades to Admin'}
+          >
+            {submittingFinalGrades ? 'Submitting...' : 'Submit Final Grades'}
+          </button>
+        </div>
+      )}
 
       <div className="animate-fade-up-1 bg-white border border-gray-200 rounded-[12px] shadow-card overflow-hidden">
         <div className="overflow-x-auto">
