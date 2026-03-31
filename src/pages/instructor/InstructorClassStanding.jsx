@@ -1410,14 +1410,14 @@ export default function InstructorClassStanding() {
         {!isLocked && Object.keys(spreadsheetData).length > 0 && overallStatus !== 'finalized' && (
           <div className="flex gap-2">
             <button
-              className={`btn-secondary !py-2 !text-[11px] ${overallStatus === 'submitted' ? 'hidden' : ''}`}
+              className={`btn-secondary !py-2 !text-[11px] w-[130px] ${overallStatus === 'submitted' ? 'hidden' : ''}`}
               onClick={handleSubmitGrades}
               disabled={submittingGrades}
             >
               {submittingGrades ? 'Submitting...' : 'Submit Grades'}
             </button>
             <button
-              className={`btn-danger !py-2 !text-[11px] ${overallStatus !== 'submitted' ? 'hidden' : ''}`}
+              className={`btn-danger !py-2 !text-[11px] w-[130px] ${overallStatus !== 'submitted' ? 'hidden' : ''}`}
               onClick={handleUnsubmitGrades}
               disabled={submittingGrades}
             >
