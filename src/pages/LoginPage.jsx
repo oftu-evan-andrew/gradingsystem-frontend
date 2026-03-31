@@ -1,18 +1,18 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import api from '../api/axios';
 import { AICS_LOGO } from '../constants/logo';
 import { T } from '../constants/tokens';
-import api from '../api/axios';
 
 export default function LoginPage({ onLogin }) {
   const navigate = useNavigate();
-  const [tab,      setTab]      = useState('student');
+  const [tab, setTab] = useState('student');
   const roleMap = { student: 'student', professor: 'instructor' };
   const getRole = () => roleMap[tab];
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [error,    setError]    = useState('');
-  const [loading,  setLoading]  = useState(false);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const [showPass, setShowPass] = useState(false);
 
   const handle = async (e) => {
@@ -109,10 +109,10 @@ export default function LoginPage({ onLogin }) {
                 onClick={() => { setTab(t); setError(''); setUsername(''); setPassword(''); }}
                 className="py-[9px] rounded-[7px] border-none font-body text-[13px] cursor-pointer transition-all duration-[180ms]"
                 style={{
-                  background:  tab === t ? '#fff' : 'transparent',
-                  color:       tab === t ? T.navy800 : T.gray400,
-                  fontWeight:  tab === t ? 700 : 500,
-                  boxShadow:   tab === t ? '0 1px 6px rgba(27,42,74,0.12)' : 'none',
+                  background: tab === t ? '#fff' : 'transparent',
+                  color: tab === t ? T.navy800 : T.gray400,
+                  fontWeight: tab === t ? 700 : 500,
+                  boxShadow: tab === t ? '0 1px 6px rgba(27,42,74,0.12)' : 'none',
                 }}
               >
                 {t === 'student' ? 'Student' : 'Instructor'}
@@ -172,12 +172,12 @@ export default function LoginPage({ onLogin }) {
             <div className="text-[11px] font-bold text-navy-700 mb-[7px] uppercase tracking-[0.5px]">Demo Credentials</div>
             {tab === 'student' ? (
               <div className="text-[12px] text-gray-500 leading-[1.8]">
-                Email: <code className="text-navy-600 font-bold bg-navy-100 px-1.5 py-px rounded">student1.bs4ma@example.com</code><br/>
+                Email: <code className="text-navy-600 font-bold bg-navy-100 px-1.5 py-px rounded">student1.bs4ma@example.com</code><br />
                 Password: <code className="text-navy-600 font-bold bg-navy-100 px-1.5 py-px rounded">password123</code>
               </div>
             ) : (
               <div className="text-[12px] text-gray-500 leading-[1.8]">
-                Email: <code className="text-navy-600 font-bold bg-navy-100 px-1.5 py-px rounded">professor@example.com</code><br/>
+                Email: <code className="text-navy-600 font-bold bg-navy-100 px-1.5 py-px rounded">professor@example.com</code><br />
                 Password: <code className="text-navy-600 font-bold bg-navy-100 px-1.5 py-px rounded">password123</code>
               </div>
             )}

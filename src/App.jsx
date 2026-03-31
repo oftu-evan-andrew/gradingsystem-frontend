@@ -10,6 +10,7 @@ import AdminGradeApprovalsPage from './pages/admin/AdminGradeApprovalsPage';
 import AdminLoginPage from './pages/admin/AdminLoginPage';
 import AdminSectionsPage from './pages/admin/AdminSectionsPage';
 import AdminSubjectsPage from './pages/admin/AdminSubjectsPage';
+import AdminSubjectLoadsPage from './pages/admin/AdminSubjectLoadsPage';
 import AdminUserPage from './pages/admin/AdminUserPage';
 
 // Student pages
@@ -42,6 +43,7 @@ const STUDENT_NAV = [
 const ADMIN_NAV = [
   { id: 'dashboard', label: 'Dashboard' },
   { id: 'users', label: 'Users' },
+  { id: 'subject-loads', label: 'Subject Loads' },
   { id: 'sections', label: 'Sections' },
   { id: 'subjects', label: 'Subjects' },
   { id: 'courses', label: 'Courses' },
@@ -137,6 +139,7 @@ export default function App() {
           <main className="flex-1 overflow-y-auto px-8 py-7 bg-gray-50">
             {page === 'dashboard' && <AdminDashboard />}
             {page === 'users' && <AdminUserPage />}
+            {page === 'subject-loads' && <AdminSubjectLoadsPage />}
             {page === 'sections' && <AdminSectionsPage />}
             {page === 'subjects' && <AdminSubjectsPage />}
             {page === 'courses' && <AdminCoursesPage />}
