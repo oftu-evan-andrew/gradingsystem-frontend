@@ -373,6 +373,26 @@ export default function InstructorClassStanding() {
     }
   };
 
+  const handleUnsubmitGrades = async () => {
+    if (!selectedSsId || !selectedPeriod) return;
+    if (!confirm('Unsubmit grades? They will be reverted to draft status so you can edit them.')) return;
+
+    setSubmittingGrades(true);
+    try {
+      const res = await axios.post('/class-standings/bulk/unsubmit', {
+        section_subject_id: selectedSsId,
+        grading_period: selectedPeriod,
+      });
+      alert(res.data.message || 'Grades unsubscribed successfully');
+      await fetchData();
+    } catch (err) {
+      console.error('Failed to unsubmit grades', err);
+      alert(err.response?.data?.message || 'Failed to unsubmit grades');
+    } finally {
+      setSubmittingGrades(false);
+    }
+  };
+
   const handleSubmitFinalGrades = async () => {
     if (!selectedSsId) return;
     if (!confirm('Submit Final Grades to Admin for approval? This will calculate the average of all 3 grading periods.')) return;
@@ -1389,6 +1409,15 @@ export default function InstructorClassStanding() {
 
         {!isLocked && Object.keys(spreadsheetData).length > 0 && overallStatus !== 'finalized' && (
           <div className="flex gap-2">
+            {overallStatus === 'submitted' && (
+              <button
+                className="btn-danger !py-2 !text-[11px]"
+                onClick={handleUnsubmitGrades}
+                disabled={submittingGrades}
+              >
+                {submittingGrades ? 'Unsubmitting...' : 'Unsubmit Grades'}
+              </button>
+            )}
             {overallStatus !== 'submitted' && (
               <button
                 className="btn-secondary !py-2 !text-[11px]"
