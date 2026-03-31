@@ -1,16 +1,16 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import axios from '../../api/axios';
-import PageHeader from '../../components/ui/PageHeader';
 import EmptyState from '../../components/ui/EmptyState';
+import Field from '../../components/ui/Field';
 import GradeTag from '../../components/ui/GradeTag';
 import Modal from '../../components/ui/Modal';
-import Field from '../../components/ui/Field';
-import { gradeChip, barHue } from '../../utils/colorHelpers';
+import PageHeader from '../../components/ui/PageHeader';
+import { barHue, gradeChip } from '../../utils/colorHelpers';
 
 const COMPONENTS = [
-  { 
-    key: 'quiz', 
-    label: 'Quiz', 
+  {
+    key: 'quiz',
+    label: 'Quiz',
     endpoint: 'quiz-records',
     fields: [
       { name: 'number', label: 'Quiz #', type: 'number', required: true },
@@ -20,27 +20,27 @@ const COMPONENTS = [
       { name: 'rating', label: 'Score', type: 'number', readonly: true },
     ]
   },
-  { 
-    key: 'recitation', 
-    label: 'Recitation', 
+  {
+    key: 'recitation',
+    label: 'Recitation',
     endpoint: 'recitation-records',
     fields: [
       { name: 'rating', label: 'Score (0-100)', type: 'number', required: true },
       { name: 'remarks', label: 'Remarks', type: 'text', required: false },
     ]
   },
-  { 
-    key: 'attendance', 
-    label: 'Attendance', 
+  {
+    key: 'attendance',
+    label: 'Attendance',
     endpoint: 'attendance-records',
     fields: [
       { name: 'date', label: 'Date', type: 'date', required: true },
       { name: 'rating', label: 'Score (0-100)', type: 'number', required: true },
     ]
   },
-  { 
-    key: 'project', 
-    label: 'Project', 
+  {
+    key: 'project',
+    label: 'Project',
     endpoint: 'project-records',
     fields: [
       { name: 'number', label: 'Project #', type: 'number', required: true },
@@ -73,7 +73,7 @@ export default function InstructorClassStanding() {
     attendance: [],
     project: [],
   });
-  
+
   const [loading, setLoading] = useState(true);
   const [selectedSsId, setSelectedSsId] = useState('');
   const [selectedPeriod, setSelectedPeriod] = useState(1);
@@ -84,7 +84,7 @@ export default function InstructorClassStanding() {
   const [submittingGrades, setSubmittingGrades] = useState(false);
   const [submittingFinalGrades, setSubmittingFinalGrades] = useState(false);
   const [periodsFinalized, setPeriodsFinalized] = useState({});
-  
+
   const [modal, setModal] = useState(null);
   const [selStudent, setSelStudent] = useState(null);
   const [form, setForm] = useState({});
@@ -110,7 +110,7 @@ export default function InstructorClassStanding() {
       const res = await axios.get(`/section-subjects?professor_id=${professorId}&per_page=500`);
       const data = res.data.data || res.data;
       setSectionSubjects(data);
-      
+
       if (data.length > 0) {
         setSelectedSsId(data[0].id);
       }
@@ -122,7 +122,7 @@ export default function InstructorClassStanding() {
   const fetchData = async () => {
     try {
       setLoading(true);
-      
+
       const ss = sectionSubjects.find(s => s.id === selectedSsId);
       if (!ss) return;
 
@@ -158,25 +158,25 @@ export default function InstructorClassStanding() {
       const spreadData = {};
       studentsData.forEach(st => {
         const stId = st.id || st.student_id;
-        
+
         const stQuizzes = quizData
           .filter(q => (q.student_id === stId || q.student?.student_id === stId))
           .sort((a, b) => (a.quiz_number || 0) - (b.quiz_number || 0));
-        
+
         const stRecitations = recData
           .filter(r => (r.student_id === stId || r.student?.student_id === stId))
           .sort((a, b) => (a.id || 0) - (b.id || 0));
-        
+
         const stAttendances = attData
           .filter(a => (a.student_id === stId || a.student?.student_id === stId))
           .sort((a, b) => new Date(a.attendance_date || 0) - new Date(b.attendance_date || 0));
-        
+
         const stProjects = projData
           .filter(p => (p.student_id === stId || p.student?.student_id === stId))
           .sort((a, b) => (a.project_number || 0) - (b.project_number || 0));
-        
+
         const cs = csData.find(c => c.student_id === stId);
-        
+
         spreadData[stId] = {
           id: cs?.id || null,
           student_id: stId,
@@ -210,13 +210,13 @@ export default function InstructorClassStanding() {
     return sum / records.length;
   };
 
-  const selectedSs = useMemo(() => 
+  const selectedSs = useMemo(() =>
     sectionSubjects.find(s => s.id === selectedSsId),
-  [sectionSubjects, selectedSsId]);
+    [sectionSubjects, selectedSsId]);
 
-  const currentComp = useMemo(() => 
+  const currentComp = useMemo(() =>
     COMPONENTS.find(c => c.key === activeComp),
-  [activeComp]);
+    [activeComp]);
 
   const overallStatus = useMemo(() => {
     if (classStandings.length === 0) return null;
@@ -239,7 +239,7 @@ export default function InstructorClassStanding() {
   const openEditModal = (student, record) => {
     setSelStudent(student);
     setEditingRecord(record);
-    
+
     if (activeComp === 'quiz') {
       setForm({
         number: record.quiz_number,
@@ -263,13 +263,13 @@ export default function InstructorClassStanding() {
         rating: record.rating ?? '',
       });
     }
-    
+
     setModal('editRecord');
   };
 
   const handleSave = async () => {
     if (!selStudent || !currentComp) return;
-    
+
     setSubmitting(true);
     try {
       const endpoint = currentComp.endpoint;
@@ -334,7 +334,7 @@ export default function InstructorClassStanding() {
 
   const handleDelete = async (record) => {
     if (!confirm('Delete this record?')) return;
-    
+
     setSubmitting(true);
     try {
       await axios.delete(`/${currentComp.endpoint}/${record.id}`);
@@ -417,7 +417,7 @@ export default function InstructorClassStanding() {
     try {
       const res = await axios.get(`/class-standings?section_subject_id=${selectedSsId}&per_page=500`);
       const data = res.data.data || res.data;
-      
+
       const periods = { 1: false, 2: false, 3: false };
       data.forEach(cs => {
         if (cs.status === 'finalized') {
@@ -444,27 +444,27 @@ export default function InstructorClassStanding() {
             section_subject_id: selectedSsId,
             grading_period: selectedPeriod,
           };
-          
+
           if (d.id) {
             gradeData.class_standing_id = d.id;
           }
-          
+
           if (d.major_exam_score !== '' && d.major_exam_score !== null) {
             gradeData.major_exam_score = parseFloat(d.major_exam_score) || 0;
           }
-          
+
           return gradeData;
         });
 
       if (grades.length > 0) {
-        await axios.put('/class-standings', { 
-          type: 'class_standing', 
+        await axios.put('/class-standings', {
+          type: 'class_standing',
           section_subject_id: selectedSsId,
           grading_period: selectedPeriod,
-          grades 
+          grades
         });
       }
-      
+
       alert('Grades saved successfully');
       await fetchData();
     } catch (err) {
@@ -520,17 +520,19 @@ export default function InstructorClassStanding() {
         </th>
       );
     }
-    {!isLocked && (
-      <th key={`add-quiz-${maxCols.quizzes}`} className="px-1 py-2 text-center bg-gray-50 min-w-[30px]">
-        <button
-          className="text-green-600 hover:text-green-800 text-lg font-bold"
-          onClick={() => handleAddColumn('quiz')}
-          title="Add Quiz Column"
-        >
-          +
-        </button>
-      </th>
-    )}
+    {
+      !isLocked && (
+        <th key={`add-quiz-${maxCols.quizzes}`} className="px-1 py-2 text-center bg-gray-50 min-w-[30px]">
+          <button
+            className="text-green-600 hover:text-green-800 text-lg font-bold"
+            onClick={() => handleAddColumn('quiz')}
+            title="Add Quiz Column"
+          >
+            +
+          </button>
+        </th>
+      )
+    }
 
     for (let i = 0; i < maxCols.recitations; i++) {
       headers.push(
@@ -546,17 +548,19 @@ export default function InstructorClassStanding() {
         </th>
       );
     }
-    {!isLocked && (
-      <th key={`add-rec-${maxCols.recitations}`} className="px-1 py-2 text-center bg-gray-50 min-w-[30px]">
-        <button
-          className="text-green-600 hover:text-green-800 text-lg font-bold"
-          onClick={() => handleAddColumn('recitation')}
-          title="Add Recitation Column"
-        >
-          +
-        </button>
-      </th>
-    )}
+    {
+      !isLocked && (
+        <th key={`add-rec-${maxCols.recitations}`} className="px-1 py-2 text-center bg-gray-50 min-w-[30px]">
+          <button
+            className="text-green-600 hover:text-green-800 text-lg font-bold"
+            onClick={() => handleAddColumn('recitation')}
+            title="Add Recitation Column"
+          >
+            +
+          </button>
+        </th>
+      )
+    }
 
     for (let i = 0; i < maxCols.attendances; i++) {
       headers.push(
@@ -572,17 +576,19 @@ export default function InstructorClassStanding() {
         </th>
       );
     }
-    {!isLocked && (
-      <th key={`add-att-${maxCols.attendances}`} className="px-1 py-2 text-center bg-gray-50 min-w-[30px]">
-        <button
-          className="text-green-600 hover:text-green-800 text-lg font-bold"
-          onClick={() => handleAddColumn('attendance')}
-          title="Add Attendance Column"
-        >
-          +
-        </button>
-      </th>
-    )}
+    {
+      !isLocked && (
+        <th key={`add-att-${maxCols.attendances}`} className="px-1 py-2 text-center bg-gray-50 min-w-[30px]">
+          <button
+            className="text-green-600 hover:text-green-800 text-lg font-bold"
+            onClick={() => handleAddColumn('attendance')}
+            title="Add Attendance Column"
+          >
+            +
+          </button>
+        </th>
+      )
+    }
 
     for (let i = 0; i < maxCols.projects; i++) {
       headers.push(
@@ -598,17 +604,19 @@ export default function InstructorClassStanding() {
         </th>
       );
     }
-    {!isLocked && (
-      <th key={`add-proj-${maxCols.projects}`} className="px-1 py-2 text-center bg-gray-50 min-w-[30px]">
-        <button
-          className="text-green-600 hover:text-green-800 text-lg font-bold"
-          onClick={() => handleAddColumn('project')}
-          title="Add Project Column"
-        >
-          +
-        </button>
-      </th>
-    )}
+    {
+      !isLocked && (
+        <th key={`add-proj-${maxCols.projects}`} className="px-1 py-2 text-center bg-gray-50 min-w-[30px]">
+          <button
+            className="text-green-600 hover:text-green-800 text-lg font-bold"
+            onClick={() => handleAddColumn('project')}
+            title="Add Project Column"
+          >
+            +
+          </button>
+        </th>
+      )
+    }
 
     headers.push(
       <th key="major-exam" className="px-2 py-2 text-center font-semibold text-gray-500 text-[10px] uppercase bg-gray-50 min-w-[80px]">
@@ -833,7 +841,7 @@ export default function InstructorClassStanding() {
     let recordId = null;
     let endpoint = '';
     let isNew = false;
-    
+
     if (type === 'recitation') {
       recordId = data.recitations?.[index]?.id;
       isNew = data.recitations?.[index]?.isNew;
@@ -852,8 +860,8 @@ export default function InstructorClassStanding() {
     if (!student) return;
 
     const value = type === 'recitation' ? data.recitations?.[index]?.rating :
-                  type === 'attendance' ? data.attendances?.[index]?.rating :
-                  data.projects?.[index]?.rating;
+      type === 'attendance' ? data.attendances?.[index]?.rating :
+        data.projects?.[index]?.rating;
 
     if (value === undefined || value === '') return;
 
@@ -976,7 +984,7 @@ export default function InstructorClassStanding() {
 
   const handleQuizSave = async () => {
     if (!selStudent || !form.pts || !form.items) return;
-    
+
     setSubmitting(true);
     try {
       const quizNumber = parseInt(form.number) || quizEditIndex + 1;
@@ -1010,14 +1018,14 @@ export default function InstructorClassStanding() {
 
   const handleMajorExamSave = async () => {
     if (!selStudent || !form.pts || !form.items) return;
-    
+
     const studentId = selStudent.id || selStudent.student_id;
     const data = spreadsheetData[studentId];
-    
+
     setSubmitting(true);
     try {
       let gradeData = {};
-      
+
       if (data?.id) {
         // Existing ClassStanding - just update it
         gradeData = {
@@ -1035,7 +1043,7 @@ export default function InstructorClassStanding() {
           major_exam_items: parseFloat(form.items),
         };
       }
-      
+
       await axios.put('/class-standings', {
         type: 'class_standing',
         grades: [gradeData]
@@ -1053,7 +1061,7 @@ export default function InstructorClassStanding() {
 
   const handleRecitationSave = async () => {
     if (!selStudent || !form.rating) return;
-    
+
     setSubmitting(true);
     try {
       const payload = {
@@ -1080,7 +1088,7 @@ export default function InstructorClassStanding() {
 
   const handleAttendanceSave = async () => {
     if (!selStudent || !form.date || !form.rating) return;
-    
+
     setSubmitting(true);
     try {
       const rating = parseFloat(form.rating);
@@ -1109,7 +1117,7 @@ export default function InstructorClassStanding() {
 
   const handleProjectSave = async () => {
     if (!selStudent || !form.number || !form.rating) return;
-    
+
     setSubmitting(true);
     try {
       const payload = {
@@ -1137,9 +1145,9 @@ export default function InstructorClassStanding() {
   const handleAddColumn = async (type) => {
     const maxCols = calcMaxColumns();
     const nextNum = type === 'quiz' ? maxCols.quizzes + 1 :
-                    type === 'recitation' ? maxCols.recitations + 1 :
-                    type === 'project' ? maxCols.projects + 1 :
-                    maxCols.attendances + 1;
+      type === 'recitation' ? maxCols.recitations + 1 :
+        type === 'project' ? maxCols.projects + 1 :
+          maxCols.attendances + 1;
 
     setSubmitting(true);
     try {
@@ -1213,13 +1221,13 @@ export default function InstructorClassStanding() {
               </span>
               {!isLocked && (
                 <>
-                  <button 
+                  <button
                     onClick={(e) => { e.stopPropagation(); openEditModal(student, r); }}
                     className="text-blue-600 hover:underline text-[10px]"
                   >
                     Edit
                   </button>
-                  <button 
+                  <button
                     onClick={(e) => { e.stopPropagation(); handleDelete(r); }}
                     className="text-red-600 hover:underline text-[10px]"
                   >
@@ -1268,7 +1276,7 @@ export default function InstructorClassStanding() {
               const studentRecords = getRecordsForStudent(studentId);
               const compRecords = studentRecords[activeComp] || [];
               const avg = calcAverage(compRecords);
-              
+
               return (
                 <tr key={studentId} className="table-row border-b border-gray-100">
                   <td className="px-[14px] py-[10px]">
@@ -1354,9 +1362,9 @@ export default function InstructorClassStanding() {
       <PageHeader title="Class Standing" sub="Manage grades for your students" />
 
       <div className="animate-fade-up mb-3 flex gap-3 flex-wrap">
-        <select 
-          className="input-field max-w-[300px]" 
-          value={selectedSsId} 
+        <select
+          className="input-field max-w-[300px]"
+          value={selectedSsId}
           onChange={e => setSelectedSsId(e.target.value)}
           disabled={loading}
         >
@@ -1367,9 +1375,9 @@ export default function InstructorClassStanding() {
           ))}
         </select>
 
-        <select 
-          className="input-field w-[140px]" 
-          value={selectedPeriod} 
+        <select
+          className="input-field w-[140px]"
+          value={selectedPeriod}
           onChange={e => setSelectedPeriod(parseInt(e.target.value))}
         >
           {GRADING_PERIODS.map(p => (
@@ -1381,11 +1389,10 @@ export default function InstructorClassStanding() {
           {COMPONENTS.map(comp => (
             <button
               key={comp.key}
-              className={`px-3 py-1.5 rounded-md text-[11px] font-medium transition-colors ${
-                activeComp === comp.key 
-                  ? 'bg-white text-navy-700 shadow-sm' 
-                  : 'text-gray-500 hover:text-gray-700'
-              }`}
+              className={`px-3 py-1.5 rounded-md text-[11px] font-medium transition-colors ${activeComp === comp.key
+                ? 'bg-white text-navy-700 shadow-sm'
+                : 'text-gray-500 hover:text-gray-700'
+                }`}
               onClick={() => setActiveComp(comp.key)}
             >
               {comp.label}
@@ -1394,32 +1401,31 @@ export default function InstructorClassStanding() {
         </div>
 
         {overallStatus && (
-          <span className={`px-3 py-2 rounded-full text-[11px] font-medium ${
-            overallStatus === 'finalized' ? 'bg-green-100 text-green-700' :
+          <span className={`px-3 py-2 rounded-full text-[11px] font-medium ${overallStatus === 'finalized' ? 'bg-green-100 text-green-700' :
             overallStatus === 'submitted' ? 'bg-yellow-100 text-yellow-700' :
-            overallStatus === 'draft' ? 'bg-gray-100 text-gray-600' :
-            'bg-orange-100 text-orange-700'
-          }`}>
+              overallStatus === 'draft' ? 'bg-gray-100 text-gray-600' :
+                'bg-orange-100 text-orange-700'
+            }`}>
             {overallStatus === 'finalized' ? '✓ Finalized' :
-             overallStatus === 'submitted' ? '● Submitted' :
-             overallStatus === 'draft' ? '○ Draft' :
-             '◐ Mixed'}
+              overallStatus === 'submitted' ? '● Submitted' :
+                overallStatus === 'draft' ? '○ Draft' :
+                  '◐ Mixed'}
           </span>
         )}
 
         {!isLocked && Object.keys(spreadsheetData).length > 0 && overallStatus !== 'finalized' && (
           <div className="flex gap-2">
             <button
-              className={`btn-secondary !py-2 !text-[11px] w-[130px] ${overallStatus === 'submitted' ? 'hidden' : ''}`}
+              className={`btn-secondary !py-2 !text-[11px] w-[130px] ${overallStatus === 'submitted' ? 'invisible' : ''}`}
               onClick={handleSubmitGrades}
-              disabled={submittingGrades}
+              disabled={submittingGrades || overallStatus === 'submitted'}
             >
               {submittingGrades ? 'Submitting...' : 'Submit Grades'}
             </button>
             <button
-              className={`btn-danger !py-2 !text-[11px] w-[130px] ${overallStatus !== 'submitted' ? 'hidden' : ''}`}
+              className={`btn-danger !py-2 !text-[11px] w-[130px] ${overallStatus !== 'submitted' ? 'invisible' : ''}`}
               onClick={handleUnsubmitGrades}
-              disabled={submittingGrades}
+              disabled={submittingGrades || overallStatus !== 'submitted'}
             >
               {submittingGrades ? 'Unsubmitting...' : 'Unsubmit Grades'}
             </button>
@@ -1451,40 +1457,40 @@ export default function InstructorClassStanding() {
       <div className="animate-fade-up-1 bg-white border border-gray-200 rounded-[12px] shadow-card overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full border-collapse text-[12px]">
-              <thead>
-                <tr className="border-b-2 border-gray-200">
-                  <th className="px-3 py-3 text-left font-semibold text-gray-500 text-[11px] uppercase tracking-[0.6px] bg-gray-50 min-w-[180px] sticky left-0 bg-gray-50">
-                    Student
-                  </th>
-                  {renderSpreadsheetHeaders()}
-                </tr>
-              </thead>
-              <tbody>
-                {students.map(st => {
-                  const studentId = st.id || st.student_id;
-                  const data = spreadsheetData[studentId] || {};
-                  return (
-                    <tr key={studentId} className="border-b border-gray-100">
-                      <td className="px-3 py-2 sticky left-0 bg-white">
-                        <div className="font-bold text-navy-900 text-[13px]">
-                          {st.user?.first_name} {st.user?.last_name}
-                        </div>
-                        <div className="text-[10px] text-gray-400 font-mono">{st.student_id}</div>
-                      </td>
-                      {renderSpreadsheetRow(studentId, data)}
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
+            <thead>
+              <tr className="border-b-2 border-gray-200">
+                <th className="px-3 py-3 text-left font-semibold text-gray-500 text-[11px] uppercase tracking-[0.6px] bg-gray-50 min-w-[180px] sticky left-0 bg-gray-50">
+                  Student
+                </th>
+                {renderSpreadsheetHeaders()}
+              </tr>
+            </thead>
+            <tbody>
+              {students.map(st => {
+                const studentId = st.id || st.student_id;
+                const data = spreadsheetData[studentId] || {};
+                return (
+                  <tr key={studentId} className="border-b border-gray-100">
+                    <td className="px-3 py-2 sticky left-0 bg-white">
+                      <div className="font-bold text-navy-900 text-[13px]">
+                        {st.user?.first_name} {st.user?.last_name}
+                      </div>
+                      <div className="text-[10px] text-gray-400 font-mono">{st.student_id}</div>
+                    </td>
+                    {renderSpreadsheetRow(studentId, data)}
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
+      </div>
 
       {(modal === 'addRecord' || modal === 'editRecord') && selStudent && (
-        <Modal 
+        <Modal
           title={modal === 'addRecord' ? `Add ${currentComp.label}` : `Edit ${currentComp.label}`}
           subtitle={`${selStudent.user?.first_name} ${selStudent.user?.last_name}`}
-          onClose={() => setModal(null)} 
+          onClose={() => setModal(null)}
           maxWidth="380px"
         >
           {renderFormFields()}
@@ -1587,8 +1593,8 @@ export default function InstructorClassStanding() {
           </div>
           <div className="flex gap-2 justify-end pt-4">
             <button className="btn-default" onClick={() => setModal(null)}>Cancel</button>
-            <button 
-              className="btn-primary" 
+            <button
+              className="btn-primary"
               onClick={handleMajorExamSave}
               disabled={submitting || !form.pts || !form.items}
             >
