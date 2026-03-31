@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import Modal from '../ui/Modal';
-import Avatar from '../ui/Avatar';
-import ProgressBar from '../ui/ProgressBar';
 import { COMP_META } from '../../constants/compMeta';
-import { avg } from '../../utils/gradeEngine';
-import { gradeChip, barHue } from '../../utils/colorHelpers';
 import { T } from '../../constants/tokens';
+import { barHue } from '../../utils/colorHelpers';
+import { avg } from '../../utils/gradeEngine';
+import Avatar from '../ui/Avatar';
+import Modal from '../ui/Modal';
+import ProgressBar from '../ui/ProgressBar';
 
 export default function SubjectDetailModal({ subject, onClose }) {
   const [periodTab, setPeriodTab] = useState(() => {
@@ -17,7 +17,6 @@ export default function SubjectDetailModal({ subject, onClose }) {
   const activePeriodData = availablePeriods.find(p => p.period === periodTab) || availablePeriods[0];
   const components = activePeriodData?.components || subject.components || {};
   const keys = Object.keys(components);
-  const gc = gradeChip(subject.grade);
 
   return (
     <Modal
@@ -51,11 +50,10 @@ export default function SubjectDetailModal({ subject, onClose }) {
       )}
 
       {/* Rating row */}
-      <div className="grid grid-cols-3 gap-2.5 mb-5">
+      <div className="grid grid-cols-2 gap-2.5 mb-5">
         {[
-          { label: 'Periodic Rating', value: `${typeof activePeriodData?.periodicRating === 'number' ? activePeriodData.periodicRating.toFixed(2) : '—'}`, bg: T.navy50,  color: barHue(activePeriodData?.periodicRating), border: T.navy100 },
-          { label: 'Final Rating',    value: `${typeof subject.finalRating === 'number' ? subject.finalRating.toFixed(2) : '—'}`,    bg: T.navy50,  color: barHue(subject.finalRating),    border: T.navy100 },
-          { label: 'Final Grade',     value: subject.grade, bg: gc.bg, color: gc.text, border: gc.border },
+          { label: 'Periodic Rating', value: `${typeof activePeriodData?.periodicRating === 'number' ? activePeriodData.periodicRating.toFixed(2) : '—'}`, bg: T.navy50, color: barHue(activePeriodData?.periodicRating), border: T.navy100 },
+          { label: 'Final Rating', value: `${typeof subject.finalRating === 'number' ? subject.finalRating.toFixed(2) : '—'}`, bg: T.navy50, color: barHue(subject.finalRating), border: T.navy100 },
         ].map(({ label, value, bg, color, border }) => (
           <div
             key={label}
@@ -87,7 +85,7 @@ export default function SubjectDetailModal({ subject, onClose }) {
           <div className="flex justify-between mb-3 text-[12px] text-gray-400">
             <span>
               Weight: <strong className="text-gray-700">{typeof components[k]?.weight === 'number' ? (components[k].weight * 100).toFixed(0) : '0'}%
-            </strong>
+              </strong>
             </span>
             <span>
               Component Average:{' '}
