@@ -373,6 +373,8 @@ const AdminGradeApprovalsPage = () => {
         >
           Approve Final Grades
         </button>
+
+        {/* This is a mess. */}
         {/* <button
           className="btn-secondary"
           onClick={handleReject}
