@@ -9,8 +9,8 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminGradeApprovalsPage from './pages/admin/AdminGradeApprovalsPage';
 import AdminLoginPage from './pages/admin/AdminLoginPage';
 import AdminSectionsPage from './pages/admin/AdminSectionsPage';
-import AdminSubjectsPage from './pages/admin/AdminSubjectsPage';
 import AdminSubjectLoadsPage from './pages/admin/AdminSubjectLoadsPage';
+import AdminSubjectsPage from './pages/admin/AdminSubjectsPage';
 import AdminUserPage from './pages/admin/AdminUserPage';
 
 // Student pages
@@ -32,12 +32,13 @@ const INSTRUCTOR_NAV = [
   { id: 'subject-load', label: 'Subject Load' },
   { id: 'faculty-load', label: 'Faculty Load' },
   { id: 'class-roster', label: 'Class Roster' },
-  { id: 'report-card', label: 'Report Card' },
+  // Shhh, im late. 
+  // { id: 'report-card', label: 'Report Card' },
 ];
 
 const STUDENT_NAV = [
   { id: 'dashboard', label: 'Dashboard' },
-  { id: 'class-standing', label: 'Class Standing' },
+  { id: ' class-standing', label: 'Class Standing' },
 ];
 
 const ADMIN_NAV = [
