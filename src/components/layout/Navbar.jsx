@@ -26,7 +26,7 @@ export default function Navbar({ title, role, user, userId, userSub, onToggle, o
               {title}
             </div>
             <div className="text-[10px] text-gold-400 font-medium tracking-[0.5px] mt-px">
-              {role === 'instructor' ? 'Faculty Portal' : 'Student Portal'}
+              {role === 'professor' ? 'Faculty Portal' : 'Student Portal'}
             </div>
           </div>
         </div>
