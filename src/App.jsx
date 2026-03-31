@@ -39,7 +39,7 @@ const INSTRUCTOR_NAV = [
 const STUDENT_NAV = [
   { id: 'dashboard', label: 'Dashboard' },
   // Shh, ayoko na mag debug.
-  { id: ' class-standing', label: 'Class Standing' },
+  // { id: ' class-standing', label: 'Class Standing' },
 ];
 
 const ADMIN_NAV = [
