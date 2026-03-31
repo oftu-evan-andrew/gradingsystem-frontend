@@ -996,16 +996,24 @@ export default function InstructorClassStanding() {
     
     setSubmitting(true);
     try {
-      const gradeData = {
-        student_id: studentId,
-        section_subject_id: selectedSsId,
-        grading_period: selectedPeriod,
-        major_exam_pts: parseFloat(form.pts),
-        major_exam_items: parseFloat(form.items),
-      };
+      let gradeData = {};
       
       if (data?.id) {
-        gradeData.class_standing_id = data.id;
+        // Existing ClassStanding - just update it
+        gradeData = {
+          class_standing_id: data.id,
+          major_exam_pts: parseFloat(form.pts),
+          major_exam_items: parseFloat(form.items),
+        };
+      } else {
+        // No ClassStanding - let backend create it
+        gradeData = {
+          student_id: studentId,
+          section_subject_id: selectedSsId,
+          grading_period: selectedPeriod,
+          major_exam_pts: parseFloat(form.pts),
+          major_exam_items: parseFloat(form.items),
+        };
       }
       
       await axios.put('/class-standings', {
