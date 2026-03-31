@@ -234,6 +234,30 @@ const AdminGradeApprovalsPage = () => {
     setModal('approve');
   };
 
+  // Handle bulk reject class standings
+  const handleReject = async () => {
+    if (!selectedSectionSubject) return;
+    if (!window.confirm('Reject these grades? They will be returned to draft status.')) return;
+
+    setSubmitting(true);
+    setMessage(null);
+
+    try {
+      const res = await axios.post('/class-standings/bulk/reject', {
+        section_subject_id: selectedSectionSubject.id,
+        grading_period: selectedPeriod,
+      });
+
+      setMessage({ type: 'success', text: res.data.message });
+      await fetchData();
+    } catch (err) {
+      console.error('Failed to reject', err);
+      setMessage({ type: 'error', text: err.response?.data?.message || 'Failed to reject grades' });
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   // Handle bulk finalize class standings
   const handleFinalize = async () => {
     if (!selectedSectionSubject) return;
@@ -348,6 +372,13 @@ const AdminGradeApprovalsPage = () => {
           }}
         >
           Approve Final Grades
+        </button>
+        <button
+          className="btn-secondary"
+          onClick={handleReject}
+          disabled={submitting || !selectedSectionSubject || selectedSectionSubject.classStandingStatus.submitted === 0}
+        >
+          Reject Class Standing
         </button>
       </div>
 
