@@ -84,7 +84,7 @@ export default function InstructorClassStanding() {
   const [submittingGrades, setSubmittingGrades] = useState(false);
   const [submittingFinalGrades, setSubmittingFinalGrades] = useState(false);
   const [periodsFinalized, setPeriodsFinalized] = useState({});
-  const [finalGradesSubmitted, setFinalGradesSubmitted] = useState(false);
+  const [finalGradesSubmitted, setFinalGradesSubmitted] = useState({});
   
   const [modal, setModal] = useState(null);
   const [selStudent, setSelStudent] = useState(null);
@@ -146,9 +146,9 @@ export default function InstructorClassStanding() {
       const csData = csRes.data.data || csRes.data;
       const sfgData = sfgRes.data.data || sfgRes.data;
 
-      // Check if final grades have been submitted
+      // Check if final grades have been submitted for this section-subject
       const hasSubmitted = sfgData.some(fg => fg.status === 'submitted' || fg.status === 'finalized');
-      setFinalGradesSubmitted(hasSubmitted);
+      setFinalGradesSubmitted(prev => ({ ...prev, [selectedSsId]: hasSubmitted }));
 
       setStudents(studentsData);
       setRecords({
@@ -1422,10 +1422,10 @@ export default function InstructorClassStanding() {
           <button
             className="btn-secondary !py-2 !text-[11px]"
             onClick={handleSubmitFinalGrades}
-            disabled={submittingFinalGrades || !periodsFinalized[1] || !periodsFinalized[2] || !periodsFinalized[3] || finalGradesSubmitted}
-            title={finalGradesSubmitted ? 'Final grades already submitted' : (!periodsFinalized[1] || !periodsFinalized[2] || !periodsFinalized[3] ? 'Complete all 3 grading periods to enable' : 'Submit Final Grades to Admin')}
+            disabled={submittingFinalGrades || !periodsFinalized[1] || !periodsFinalized[2] || !periodsFinalized[3] || finalGradesSubmitted[selectedSsId]}
+            title={finalGradesSubmitted[selectedSsId] ? 'Final grades already submitted' : (!periodsFinalized[1] || !periodsFinalized[2] || !periodsFinalized[3] ? 'Complete all 3 grading periods to enable' : 'Submit Final Grades to Admin')}
           >
-            {submittingFinalGrades ? 'Submitting...' : finalGradesSubmitted ? 'Final Grades Submitted' : 'Submit Final Grades'}
+            {submittingFinalGrades ? 'Submitting...' : finalGradesSubmitted[selectedSsId] ? 'Final Grades Submitted' : 'Submit Final Grades'}
           </button>
         </div>
       )}
