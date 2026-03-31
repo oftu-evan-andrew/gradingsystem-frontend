@@ -213,7 +213,7 @@ const AdminGradeApprovalsPage = () => {
   const openFinalizeModal = (row) => {
     setSelectedSectionSubject(row);
     setMessage(null);
-    
+
     // Auto-select the first grading period that has submitted grades
     const stats = row.classStandingStatus;
     let defaultPeriod = 1;
@@ -373,13 +373,13 @@ const AdminGradeApprovalsPage = () => {
         >
           Approve Final Grades
         </button>
-        <button
+        {/* <button
           className="btn-secondary"
           onClick={handleReject}
           disabled={submitting || !selectedSectionSubject || selectedSectionSubject.classStandingStatus.submitted === 0}
         >
           Reject Class Standing
-        </button>
+        </button> */}
       </div>
 
       {/* Finalize Modal */}
