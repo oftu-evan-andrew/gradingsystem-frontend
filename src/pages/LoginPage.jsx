@@ -23,6 +23,18 @@ export default function LoginPage({ onLogin }) {
     try {
       const res = await api.post('/auth/login', { email: username, password });
       const { access_token, user } = res.data;
+
+      if (tab === 'student' && user.role !== 'student') {
+        setError('This account is not a student account. Please use the Instructor tab.');
+        setLoading(false);
+        return;
+      }
+      if (tab === 'professor' && user.role !== 'professor') {
+        setError('This account is not an instructor account. Please use the Student tab.');
+        setLoading(false);
+        return;
+      }
+
       localStorage.setItem('token', access_token);
       localStorage.setItem('user', JSON.stringify(user));
       onLogin(user);

@@ -23,8 +23,8 @@ import InstructorClassStanding from './pages/instructor/InstructorClassStanding'
 import ReportCardPage from './pages/instructor/ReportCardPage';
 import SubjectLoadPage from './pages/instructor/SubjectLoadPage';
 
-import { initStore } from './utils/store';
 import api from './api/axios';
+import { initStore } from './utils/store';
 
 const INSTRUCTOR_NAV = [
   { id: 'class-standing', label: 'Class Standing' },
@@ -110,7 +110,7 @@ export default function App() {
   const isStudent = role === 'student';
 
   if (isStudent && (loadingStudent || !studentData)) {
-    return <div className="flex flex-col h-screen items-center justify-center bg-gray-50 text-navy-900 font-display text-lg animate-pulse">Loading amazing things...</div>;
+    return <div className="flex flex-col h-screen items-center justify-center bg-gray-50 text-navy-900 font-display text-lg animate-pulse">wait lang ha...</div>;
   }
 
   const student = studentData?.student || { name: user?.first_name || '', studentId: '', section: '', semester: '', cumulativeGPA: 0.0 };
