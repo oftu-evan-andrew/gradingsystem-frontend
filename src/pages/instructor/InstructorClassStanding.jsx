@@ -417,36 +417,32 @@ export default function InstructorClassStanding() {
 
     setSavingSpreadsheet(true);
     try {
-      // First, ensure ClassStanding records exist for all students
-      const studentsWithoutCS = Object.values(spreadsheetData).filter(d => !d.id);
-      
-      if (studentsWithoutCS.length > 0) {
-        const gradesToCreate = studentsWithoutCS.map(d => ({
-          student_id: d.student_id,
-          section_subject_id: selectedSsId,
-          grading_period: selectedPeriod,
-          major_exam_score: null,
-        }));
-
-        await axios.post('/class-standings/bulk', { 
-          type: 'class_standing', 
-          grades: gradesToCreate 
-        });
-        
-        // Refresh data to get the new ClassStanding IDs
-        await fetchData();
-      }
-
-      // Now update major exam scores
       const grades = Object.values(spreadsheetData)
-        .filter(d => d.id)
-        .map(d => ({
-          class_standing_id: d.id,
-          major_exam_score: d.major_exam_score === '' ? null : parseFloat(d.major_exam_score) || 0,
-        }));
+        .map(d => {
+          const gradeData = {
+            student_id: d.student_id,
+            section_subject_id: selectedSsId,
+            grading_period: selectedPeriod,
+          };
+          
+          if (d.id) {
+            gradeData.class_standing_id = d.id;
+          }
+          
+          if (d.major_exam_score !== '' && d.major_exam_score !== null) {
+            gradeData.major_exam_score = parseFloat(d.major_exam_score) || 0;
+          }
+          
+          return gradeData;
+        });
 
       if (grades.length > 0) {
-        await axios.put('/class-standings', { type: 'class_standing', grades });
+        await axios.put('/class-standings', { 
+          type: 'class_standing', 
+          section_subject_id: selectedSsId,
+          grading_period: selectedPeriod,
+          grades 
+        });
       }
       
       alert('Grades saved successfully');
@@ -997,17 +993,24 @@ export default function InstructorClassStanding() {
     
     const studentId = selStudent.id || selStudent.student_id;
     const data = spreadsheetData[studentId];
-    if (!data?.id) return;
     
     setSubmitting(true);
     try {
+      const gradeData = {
+        student_id: studentId,
+        section_subject_id: selectedSsId,
+        grading_period: selectedPeriod,
+        major_exam_pts: parseFloat(form.pts),
+        major_exam_items: parseFloat(form.items),
+      };
+      
+      if (data?.id) {
+        gradeData.class_standing_id = data.id;
+      }
+      
       await axios.put('/class-standings', {
         type: 'class_standing',
-        grades: [{
-          class_standing_id: data.id,
-          major_exam_pts: parseFloat(form.pts),
-          major_exam_items: parseFloat(form.items)
-        }]
+        grades: [gradeData]
       });
       await fetchData();
       setModal(null);
