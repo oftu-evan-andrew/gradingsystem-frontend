@@ -1390,8 +1390,8 @@ export default function InstructorClassStanding() {
             <button
               key={comp.key}
               className={`px-3 py-1.5 rounded-md text-[11px] font-medium transition-colors ${activeComp === comp.key
-                ? 'bg-white text-navy-700 shadow-sm'
-                : 'text-gray-500 hover:text-gray-700'
+                  ? 'bg-white text-navy-700 shadow-sm'
+                  : 'text-gray-500 hover:text-gray-700'
                 }`}
               onClick={() => setActiveComp(comp.key)}
             >
@@ -1402,9 +1402,9 @@ export default function InstructorClassStanding() {
 
         {overallStatus && (
           <span className={`px-3 py-2 rounded-full text-[11px] font-medium ${overallStatus === 'finalized' ? 'bg-green-100 text-green-700' :
-            overallStatus === 'submitted' ? 'bg-yellow-100 text-yellow-700' :
-              overallStatus === 'draft' ? 'bg-gray-100 text-gray-600' :
-                'bg-orange-100 text-orange-700'
+              overallStatus === 'submitted' ? 'bg-yellow-100 text-yellow-700' :
+                overallStatus === 'draft' ? 'bg-gray-100 text-gray-600' :
+                  'bg-orange-100 text-orange-700'
             }`}>
             {overallStatus === 'finalized' ? '✓ Finalized' :
               overallStatus === 'submitted' ? '● Submitted' :
@@ -1416,16 +1416,16 @@ export default function InstructorClassStanding() {
         {!isLocked && Object.keys(spreadsheetData).length > 0 && overallStatus !== 'finalized' && (
           <div className="flex gap-2">
             <button
-              className={`btn-secondary !py-2 !text-[11px] w-[130px] ${overallStatus === 'submitted' ? 'invisible' : ''}`}
+              className={`btn-secondary !py-2 !text-[11px] w-[130px] ${overallStatus === 'submitted' ? 'hidden' : ''}`}
               onClick={handleSubmitGrades}
-              disabled={submittingGrades || overallStatus === 'submitted'}
+              disabled={submittingGrades}
             >
               {submittingGrades ? 'Submitting...' : 'Submit Grades'}
             </button>
             <button
-              className={`btn-danger !py-2 !text-[11px] w-[130px] ${overallStatus !== 'submitted' ? 'invisible' : ''}`}
+              className={`btn-danger !py-2 !text-[11px] w-[130px] ${overallStatus !== 'submitted' ? 'hidden' : ''}`}
               onClick={handleUnsubmitGrades}
-              disabled={submittingGrades || overallStatus !== 'submitted'}
+              disabled={submittingGrades}
             >
               {submittingGrades ? 'Unsubmitting...' : 'Unsubmit Grades'}
             </button>
